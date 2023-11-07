@@ -1,8 +1,9 @@
 pragma solidity ^0.8.19;
 
+import "./Ownable.sol";
 //SPDX-License-Identifier: MIT
 
-contract SimpleCoin{
+contract SimpleCoin is Ownable{
     mapping(address => uint) public balances;
     mapping(address => mapping(address => uint)) public allowance;
     mapping(address => bool) public frozen;
@@ -11,10 +12,9 @@ contract SimpleCoin{
 
     event freezeAccount(address indexed target, bool indexed frozen);
 
-    address public owner;
 
     constructor(uint initialSupply) public {
-        owner = msg.sender;
+        
         mint(owner, initialSupply);
     }
 
@@ -31,7 +31,7 @@ contract SimpleCoin{
     }
 
 
-    function transfer(address _to, uint _amount) public {
+    function transfer(address _to, uint _amount) virtual public {
         require(balances[msg.sender] >= _amount);          // 잔액 확인
         require(balances[_to] + _amount >= balances[_to]); // 오버플로우 방지
         balances [msg.sender] -= _amount;
@@ -70,6 +70,8 @@ contract SimpleCoin{
         frozen[_target] = _frozen;
         emit freezeAccount(_target, _frozen);
     }
+
+
 
 
 }
